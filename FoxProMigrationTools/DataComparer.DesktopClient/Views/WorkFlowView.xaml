@@ -1,0 +1,252 @@
+﻿<UserControl x:Class="DataComparer.DesktopClient.Views.WorkFlowView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    Margin="5 0 0 0">
+            <TextBlock Margin="3"
+                       VerticalAlignment="Center"
+                       Text="Select Workflow" />
+            <ComboBox Margin="3"
+                      Name="CbWorkFlow"
+                      DisplayMemberPath="Name" />
+        </StackPanel>
+
+        <TabControl Grid.Row="1" ItemsSource="{Binding ElementName=CbWorkFlow, Path=SelectedItem.TableDetailList}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding TableName}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   Text="Enter data"
+                                   Style="{StaticResource HeaderTextBoxStyle}" />
+
+                        <Separator Grid.Row="1" />
+
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ItemsControl Grid.Column="0"
+                                          Margin="10 0 0 0"
+                                          DataContext="{Binding ElementName=CbWorkFlow,
+                                                                Path=SelectedItem}"
+                                          ItemsSource="{Binding WhereClauseConditions}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <StackPanel Grid.Row="0"
+                                                        Orientation="Horizontal"
+                                                        Margin="5">
+                                                <RadioButton GroupName="{Binding ColumnName}"
+                                                             Content="Same Value"
+                                                             IsChecked="{Binding IsSameValueForBothDatabase,
+                                                                                 Mode=TwoWay,
+                                                                                 UpdateSourceTrigger=PropertyChanged}" />
+                                                <RadioButton GroupName="{Binding ColumnName}" Content="Different Value" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1"
+                                                        Orientation="Horizontal"
+                                                        Margin="5 0 5 0"
+                                                        Visibility="{Binding IsSameValueForBothDatabase,
+                                                                             Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="{Binding ColumnName}"
+                                                           Margin="3"
+                                                           VerticalAlignment="Center" />
+                                                <TextBox Text="{Binding ColumnValue}"
+                                                         Width="120"
+                                                         Margin="3" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Row="1"
+                                                        Orientation="Horizontal"
+                                                        Margin="5 0 5 0"
+                                                        Visibility="{Binding IsSameValueForBothDatabase,
+                                                                             Converter={StaticResource NegateBooleanToVisibilityConverter}}">
+                                                <TextBlock VerticalAlignment="Center" Margin="3">
+                                                    <Run Text="DBF Value " />
+                                                    <Run Text="{Binding ColumnName}" />
+                                                </TextBlock>
+                                                <TextBox Text="{Binding ValueForDatabaseOne}"
+                                                         Width="120"
+                                                         Margin="3" />
+
+                                                <TextBlock VerticalAlignment="Center" Margin="3">
+                                                    <Run Text="SQL Value " />
+                                                    <Run Text="{Binding ColumnName}" />
+                                                </TextBlock>
+                                                <TextBox Text="{Binding ValueForDatabaseTwo}"
+                                                         Width="120"
+                                                         Margin="3" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Button Grid.Column="1"
+                                    Name="BtnGo"
+                                    VerticalAlignment="Bottom"
+                                    Content="Go"
+                                    Margin="3"
+                                    MinWidth="80"
+                                    Click="BtnGo_OnClick"
+                                    Style="{StaticResource AccentedSquareButtonStyle}" />
+                        </Grid>
+
+
+                        <Grid Grid.Row="3" Margin="10 0 0 0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="0"
+                                           Margin="3"
+                                           VerticalAlignment="Center">
+                                    <Run Text="Total records " />
+                                    <Run Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DatabaseOneType}" FontWeight="Bold" />
+                                </TextBlock>
+
+                                <TextBox Grid.Row="0"
+                                         Grid.Column="1"
+                                         Margin="3"
+                                         IsReadOnly="True"
+                                         MinWidth="30"
+                                         Text="{Binding FirstDatabaseData.Rows.Count,
+                                                        Mode=OneWay}" />
+
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="2"
+                                           Margin="3"
+                                           VerticalAlignment="Center">
+                                    <Run Text="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DatabaseTwoType}" FontWeight="Bold" />
+                                </TextBlock>
+
+                                <TextBox Grid.Row="0"
+                                         Grid.Column="3"
+                                         Margin="3"
+                                         IsReadOnly="True"
+                                         MinWidth="30"
+                                         Text="{Binding SecondDatabaseData.Rows.Count,
+                                                        Mode=OneWay}" />
+                            </Grid>
+
+                            <ScrollViewer Grid.Row="1"
+                                          VerticalScrollBarVisibility="Visible"
+                                          HorizontalScrollBarVisibility="Disabled">
+                                <ItemsControl DataContext="{Binding ElementName=LvTableList, Path=SelectedItem}" ItemsSource="{Binding RowComparisonList}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0 10 0 0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+
+                                                <Grid Grid.Row="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                                                        <Run Text="DBF " />
+                                                        <Run Text="{Binding ElementName=LvTableList, Path=SelectedItem.PrimaryColumnName}" />
+                                                        <Run Text=" " />
+                                                        <Run Text="{Binding FirstDatabasePrimaryColumnValue}" FontWeight="Bold" />
+                                                        <Run Text=" compared to SQL " />
+                                                        <Run Text="{Binding ElementName=LvTableList, Path=SelectedItem.PrimaryColumnName}" />
+                                                    </TextBlock>
+                                                    <ComboBox Grid.Column="1"
+                                                              Margin="5 0 0 0"
+                                                              ItemsSource="{Binding SecondDatabasePrimaryColumnValueList}"
+                                                              SelectedItem="{Binding SecondDatabasePrimaryColumnValue,
+                                                                                     Mode=TwoWay,
+                                                                                     UpdateSourceTrigger=PropertyChanged}" />
+                                                </Grid>
+
+                                                <DataGrid Name="DbResult"
+                                                          Grid.Row="1"
+                                                          FrozenColumnCount="1"
+                                                          IsReadOnly="True"
+                                                          VerticalScrollBarVisibility="Disabled"
+                                                          CanUserAddRows="False"
+                                                          AutoGeneratingColumn="DbResult_OnAutoGeneratingColumn"
+                                                          ItemsSource="{Binding ResultDataTable}">
+                                                    <DataGrid.CellStyle>
+                                                        <Style TargetType="{x:Type DataGridCell}">
+                                                            <Setter Property="Background">
+                                                                <Setter.Value>
+                                                                    <MultiBinding Converter="{StaticResource CellBackgroundColorConverter}">
+                                                                        <Binding RelativeSource="{RelativeSource Self}" Path="Column.Header" />
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type DataGridRow}}" Path="DataContext" />
+                                                                        <Binding RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" Path="ItemsSource" />
+                                                                    </MultiBinding>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </DataGrid.CellStyle>
+                                                </DataGrid>
+
+                                                <Separator Grid.Row="2" Margin="10 3 10 3" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </Grid>
+</UserControl>
